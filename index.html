@@ -13,12 +13,18 @@
     }
     .qrcodebox {
         display: inline-block;
-        margin: 5px;
+        margin: 15px;
         text-align:center;
     }
     input, textarea {
         width:100%;
     }
+
+    thead { display: table-header-group; }
+    tfoot { display: table-footer-group; }
+
+
+
 </style>
 
 </head>
@@ -32,7 +38,7 @@
 
         <input type="text" placeholder="Name of the key (choose whatever you want)" id="title"><br>
         <textarea id="text" cols="150" rows="20" placeholder="Your GPG Key"></textarea><br>
-        <input type="button" value="Generate!" id="generate">🔑
+        <input type="button" value="Generate!" id="generate">
 </div>
 
 
@@ -45,18 +51,21 @@ function makeCode () {
 	
 	if (elText.value) {
 		$('#input').hide();
-		var pieces=elText.value.match(/(.|[\r\n]){1,2000}/g); 
+		var pieces=elText.value.match(/(.|[\r\n]){1,1200}/g); 
+        
         $('body').append('<h1>'+$('#title').val()+'</h1>');
-		for(var i=0;i<pieces.length;i++){
-			$('body').append('<div class="qrcodebox"><span id="qrcode'+i+'" style="width:500px; height:500px; margin-top:15px;"></span>Part '+(i+1)+' of '+pieces.length+'</div>');
+        $('body').append('<small>To reassemble just scan one code after another and concat the resulting strings</small>');
+        $('body').append('<tbody></tbody>');
+            for(var i=0;i<pieces.length;i++){
+            $("tbody").append('<div class="qrcodebox"><span id="qrcode'+i+'" style="width:500px; height:500px; margin-top:15px;"></span>'+$('#title').val()+' - '+(i+1)+' of '+pieces.length+'</div>');
 			qrcode[i]=new QRCode(document.getElementById("qrcode"+i), {
-				width : 500,
-				height : 500,
-				correctLevel : QRCode.CorrectLevel.L
+				width : 400,
+				height : 400,
+				correctLevel : QRCode.CorrectLevel.H
 			});
 			qrcode[i].makeCode(pieces[i]);
         }
-        $('body').append('<br><small>To reassemble just scan one code after another and concat the resulting strings</small>');
+        
 	}
 }
 
