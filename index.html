@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">
+<head>
+<title>GPG/PGP Key to QR Code converter</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<script type="text/javascript" src="qrcodejs/jquery.min.js"></script>
+<script type="text/javascript" src="qrcodejs/qrcode.js"></script>
+<style type="text/css">
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        margin: 20px;
+    }
+    .qrcodebox {
+        display: inline-block;
+        margin: 5px;
+        text-align:center;
+    }
+    input, textarea {
+        width:100%;
+    }
+</style>
+
+</head>
+<body>
+
+<div id="input">
+        <h1>GPG Key 2 QR Code</h1>
+        This tool will convert your GPG key (or any other arbitrary ascii data) to QR codes. To restart and enter new data, simply refresh the page.<br><br>
+        
+        Paste your private key here. There is no need to paste your public key as well, as you private key already contains a copy of it.<br>
+
+        <input type="text" placeholder="Name of the key (choose whatever you want)" id="title"><br>
+        <textarea id="text" cols="150" rows="20" placeholder="Your GPG Key"></textarea><br>
+        <input type="button" value="Generate!" id="generate">🔑
+</div>
+
+
+<script type="text/javascript">
+
+var qrcode=[];
+
+function makeCode () {		
+	var elText = document.getElementById("text");
+	
+	if (elText.value) {
+		$('#input').hide();
+		var pieces=elText.value.match(/(.|[\r\n]){1,2000}/g); 
+        $('body').append('<h1>'+$('#title').val()+'</h1>');
+		for(var i=0;i<pieces.length;i++){
+			$('body').append('<div class="qrcodebox"><span id="qrcode'+i+'" style="width:500px; height:500px; margin-top:15px;"></span>Part '+(i+1)+' of '+pieces.length+'</div>');
+			qrcode[i]=new QRCode(document.getElementById("qrcode"+i), {
+				width : 500,
+				height : 500,
+				correctLevel : QRCode.CorrectLevel.L
+			});
+			qrcode[i].makeCode(pieces[i]);
+        }
+        $('body').append('<br><small>To reassemble just scan one code after another and concat the resulting strings</small>');
+	}
+}
+
+
+$("#generate").
+	on("click", function () {
+		makeCode();
+	});
+</script>
+</body>
